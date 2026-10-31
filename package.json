@@ -1,0 +1,21 @@
+{
+  "name": "native-modules-and-off",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Estudo de Spec-Driven Development com offline-first e Turbo Modules",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "mobile": "npm run start -w mobile",
+    "mobile:ios": "npm run ios -w mobile",
+    "mobile:android": "npm run android -w mobile",
+    "mobile:prebuild": "npm run prebuild -w mobile",
+    "api": "npm run dev -w api",
+    "typecheck": "npm run typecheck -w @nmao/shared && npm run typecheck -w api && npm run typecheck -w mobile"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

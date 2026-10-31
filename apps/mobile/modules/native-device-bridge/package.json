@@ -1,0 +1,24 @@
+{
+  "name": "native-device-bridge",
+  "version": "0.1.0",
+  "description": "Turbo Module de estudo para snapshot nativo do device",
+  "main": "src/index",
+  "react-native": "src/index",
+  "codegenConfig": {
+    "name": "NativeDeviceBridgeSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.nativedevicebridge"
+    }
+  },
+  "author": "Eduardo Maia",
+  "license": "MIT",
+  "homepage": "#readme",
+  "create-react-native-library": {
+    "type": "turbo-module",
+    "languages": "kotlin-objc",
+    "tools": [],
+    "version": "0.64.0"
+  }
+}
