@@ -16,3 +16,15 @@ export const NoteInputSchema = z.object({
 });
 
 export type NoteInput = z.infer<typeof NoteInputSchema>;
+
+export const NotesListResponseSchema = z.object({
+  notes: z.array(NoteSchema),
+});
+
+export type NotesListResponse = z.infer<typeof NotesListResponseSchema>;
+
+export const NoteCreateResponseSchema = z.object({
+  note: NoteSchema,
+});
+
+export type NoteCreateResponse = z.infer<typeof NoteCreateResponseSchema>;

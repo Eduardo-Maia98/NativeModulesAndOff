@@ -1,4 +1,4 @@
-import { asc, eq, isNull } from 'drizzle-orm';
+import { asc, desc, eq, isNull } from 'drizzle-orm';
 import * as Crypto from 'expo-crypto';
 import type { Note, OutboxItem, SyncOperation } from '@nmao/shared';
 import { db } from './client';
@@ -21,6 +21,16 @@ export function listVisibleNotes(): Note[] {
     .select()
     .from(notes)
     .where(isNull(notes.deletedAt))
+    .orderBy(desc(notes.updatedAt))
+    .all()
+    .map(toNote);
+}
+
+export function listAllNotes(): Note[] {
+  return db
+    .select()
+    .from(notes)
+    .orderBy(desc(notes.updatedAt))
     .all()
     .map(toNote);
 }

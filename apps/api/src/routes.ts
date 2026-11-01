@@ -1,6 +1,8 @@
+import { randomUUID } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
-import { and, eq, gt, isNull } from 'drizzle-orm';
+import { and, desc, eq, gt } from 'drizzle-orm';
 import {
+  NoteInputSchema,
   PullQuerySchema,
   PushRequestSchema,
   type Note,
@@ -25,7 +27,7 @@ function toNote(row: typeof notes.$inferSelect): Note {
 export async function registerRoutes(app: FastifyInstance) {
   app.get('/', async () => ({
     service: 'native-modules-and-off-api',
-    routes: ['/health', '/notes', '/sync/pull', '/sync/push'],
+    routes: ['/health', '/notes', 'POST /notes', '/sync/pull', '/sync/push'],
   }));
 
   app.get('/health', async () => ({
@@ -38,10 +40,46 @@ export async function registerRoutes(app: FastifyInstance) {
     const rows = db
       .select()
       .from(notes)
-      .where(isNull(notes.deletedAt))
+      .orderBy(desc(notes.updatedAt))
       .all();
 
     return { notes: rows.map(toNote) };
+  });
+
+  app.post('/notes', async (request, reply) => {
+    const body = (request.body ?? {}) as { title?: unknown; body?: unknown };
+    const title =
+      typeof body.title === 'string' && body.title.trim().length > 0
+        ? body.title.trim()
+        : 'Sem titulo';
+    const parsed = NoteInputSchema.safeParse({
+      title,
+      body: typeof body.body === 'string' ? body.body : '',
+    });
+    if (!parsed.success) {
+      return reply.status(400).send({ error: parsed.error.flatten() });
+    }
+
+    const createdAt = now();
+    const note: Note = {
+      id: randomUUID(),
+      title: parsed.data.title,
+      body: parsed.data.body,
+      updatedAt: createdAt,
+      deletedAt: null,
+    };
+
+    db.insert(notes)
+      .values({
+        id: note.id,
+        title: note.title,
+        body: note.body,
+        updatedAt: note.updatedAt,
+        deletedAt: null,
+      })
+      .run();
+
+    return { note };
   });
 
   app.get('/sync/pull', async (request) => {

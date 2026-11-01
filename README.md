@@ -15,10 +15,11 @@ NativeModulesAndOff/
 - Monorepo npm workspaces.
 - App Expo com `expo-sqlite`, Drizzle, NetInfo, `expo-crypto` e `expo-dev-client`.
 - Turbo Module local `native-device-bridge` (Kotlin + Objective-C + Codegen).
-- Backend com `/health`, `/notes`, `/sync/pull` e `/sync/push`.
-- Tela inicial para criar notas no SQLite, ver outbox e disparar sync.
+- Backend com `/health`, `GET/POST /notes`, `/sync/pull` e `/sync/push`.
+- Bottom tabs: adicionar notas, dump da tabela SQLite local e dump da tabela do backend.
+- Sync automático (rede, mutação local e intervalo de 5s). Sem botão manual.
 
-Specs: `specs/001-offline-first` e `specs/002-native-modules`.
+Specs: `specs/001-offline-first`, `specs/002-native-modules` e `specs/003-auto-sync-tabs`.
 
 ## Setup
 
@@ -57,11 +58,12 @@ Emulador Android fala com a API em `http://10.0.2.2:3333`. iOS Simulator usa `ht
 
 ## Como estudar o fluxo
 
-1. Abra o app, crie uma nota — ela vai para o SQLite e para a outbox.
-2. Ative airplane mode, crie outra, confirme que a UI continua funcionando.
-3. Volte a rede e toque em **Sincronizar**.
-4. Inspecione `GET http://localhost:3333/notes`.
-5. O card **Turbo Module** mostra plataforma/modelo vindos de Kotlin/ObjC.
+1. Abra o app na aba **Adicionar**, crie uma nota — ela vai para o SQLite e para a outbox.
+2. Confira a aba **Local** (tabela `notes` do device, incluindo tombstones).
+3. Ative airplane mode, crie outra, confirme que a UI continua funcionando.
+4. Volte a rede — o sync corre sozinho. A aba **Backend** deve convergir.
+5. Inspecione `GET http://localhost:3333/notes`.
+6. O card **Turbo Module** mostra plataforma/modelo vindos de Kotlin/ObjC.
 
 ## Stack
 

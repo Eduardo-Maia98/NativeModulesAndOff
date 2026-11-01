@@ -4,8 +4,11 @@
   "main": "index.ts",
   "private": true,
   "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
     "@nmao/shared": "*",
     "@react-native-community/netinfo": "12.0.1",
+    "@react-navigation/bottom-tabs": "^7.21.0",
+    "@react-navigation/native": "^7.5.1",
     "drizzle-orm": "^0.44.6",
     "expo": "~58.0.22",
     "expo-crypto": "~58.0.7",
@@ -15,6 +18,9 @@
     "native-device-bridge": "file:./modules/native-device-bridge",
     "react": "19.3.0",
     "react-native": "0.88.1",
+    "react-native-gesture-handler": "~3.3.0",
+    "react-native-safe-area-context": "~5.10.1",
+    "react-native-screens": "~4.30.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
