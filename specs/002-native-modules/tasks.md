@@ -8,4 +8,4 @@
 - [x] Tela inicial consumindo o módulo, com fallback explícito.
 - [ ] Rodar `expo prebuild` e validar em simulador iOS.
 - [ ] Rodar em emulador Android.
-- [ ] Spec 003 (futuro): sync nativo em background.
+- [ ] Spec 004 (futuro): sync nativo em background.

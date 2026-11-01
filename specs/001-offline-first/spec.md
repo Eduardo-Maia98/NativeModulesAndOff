@@ -38,4 +38,5 @@ Uma **nota** tem:
 
 ## Fora desta spec
 
-- Login, conflitos campo a campo, sync em background nativo (WorkManager/BGTask). Isso pode virar `003+`.
+- Login, conflitos campo a campo, sync em background nativo (WorkManager/BGTask). Isso pode virar `004+`.
+- Disparo automático do loop e abas de inspeção: spec `003`.

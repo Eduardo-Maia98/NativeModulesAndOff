@@ -1,7 +1,10 @@
 import { Platform } from 'react-native';
 import {
+  NoteCreateResponseSchema,
+  NotesListResponseSchema,
   PullResponseSchema,
   PushResponseSchema,
+  type Note,
   type OutboxItem,
   type PullResponse,
   type PushResponse,
@@ -12,7 +15,7 @@ function defaultApiUrl() {
     return process.env.EXPO_PUBLIC_API_URL;
   }
   if (Platform.OS === 'android') {
-    return 'http://10.0.2.2:3333';
+    return 'http://192.168.15.35:3333';
   }
   return 'http://localhost:3333';
 }
@@ -34,6 +37,22 @@ async function request(path: string, init?: RequestInit) {
   }
 
   return response.json();
+}
+
+export async function fetchRemoteNotes(): Promise<Note[]> {
+  const json = await request('/notes');
+  return NotesListResponseSchema.parse(json).notes;
+}
+
+export async function createRemoteNote(title: string, body = ''): Promise<Note> {
+  const json = await request('/notes', {
+    method: 'POST',
+    body: JSON.stringify({
+      title: title.trim() || 'Sem titulo',
+      body,
+    }),
+  });
+  return NoteCreateResponseSchema.parse(json).note;
 }
 
 export async function pullChanges(since: number): Promise<PullResponse> {

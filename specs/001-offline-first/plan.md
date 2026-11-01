@@ -23,7 +23,8 @@ Tabela `notes` com o mesmo formato canônico da spec. Sem outbox.
 | Método | Rota | Papel |
 | --- | --- | --- |
 | GET | `/health` | Liveness |
-| GET | `/notes` | Debug / inspeção |
+| GET | `/notes` | Debug / inspeção da tabela completa (inclui tombstones) |
+| POST | `/notes` | Cria nota direto no servidor (estudo; id nasce no BE) |
 | GET | `/sync/pull?since=<ms>` | Mudanças com `updatedAt > since` |
 | POST | `/sync/push` | Aplica lote da outbox |
 

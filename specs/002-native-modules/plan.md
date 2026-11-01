@@ -24,4 +24,4 @@ Fica em `modules/native-device-bridge` dentro do app Expo, autolinkada.
 
 ## Próximos módulos (não nesta entrega)
 
-Um candidato natural é um worker nativo de sync (background fetch / WorkManager) lendo a mesma SQLite. Isso vira spec `003` quando formos estudá-lo.
+Um candidato natural é um worker nativo de sync (background fetch / WorkManager) lendo a mesma SQLite. Isso vira spec `004` quando formos estudá-lo.

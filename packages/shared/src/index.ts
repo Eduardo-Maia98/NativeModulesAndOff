@@ -1,8 +1,12 @@
 export {
   NoteSchema,
   NoteInputSchema,
+  NotesListResponseSchema,
+  NoteCreateResponseSchema,
   type Note,
   type NoteInput,
+  type NotesListResponse,
+  type NoteCreateResponse,
 } from './note';
 
 export {
