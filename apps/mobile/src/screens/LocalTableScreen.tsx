@@ -28,10 +28,19 @@ export function LocalTableScreen() {
 
   return (
     <Screen>
-      <View style={styles.header}>
-        <Text style={styles.kicker}>SQLite no device</Text>
-        <Text style={styles.title}>Tabela local</Text>
-        <Text style={styles.muted}>
+      <View
+        style={styles.header}
+        accessible
+        accessibilityRole="header"
+        accessibilityLabel={`Tabela local. SQLite no aparelho. ${notes.length} ${notes.length === 1 ? 'linha' : 'linhas'}. Outbox ${outboxCount}`}
+      >
+        <Text style={styles.kicker} importantForAccessibility="no">
+          SQLite no device
+        </Text>
+        <Text style={styles.title} importantForAccessibility="no">
+          Tabela local
+        </Text>
+        <Text style={styles.muted} importantForAccessibility="no">
           notes · {notes.length} row{notes.length === 1 ? '' : 's'} · outbox {outboxCount}
         </Text>
       </View>

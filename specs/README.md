@@ -17,6 +17,7 @@ specs/
   001-offline-first/       # fluxo SQLite + sync
   002-native-modules/      # Turbo Modules nativos
   003-auto-sync-tabs/      # sync automático + abas de inspeção
+  007-a11y/                # leitor de tela (TalkBack / VoiceOver)
 ```
 
 Cada feature recebe um prefixo numérico sequencial. Não reaproveite números.

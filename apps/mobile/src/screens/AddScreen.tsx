@@ -14,6 +14,7 @@ import { createNote, deleteNote, listVisibleNotes } from '../db/repository';
 import { API_URL, createRemoteNote } from '../lib/api';
 import { readNativeBridge, type NativeStatus } from '../native/device';
 import { requestSync } from '../sync/auto';
+import type { SyncResult } from '../sync/engine';
 import { formatSync } from '../sync/format';
 import { useSyncStatus } from '../sync/SyncProvider';
 import { Screen } from '../ui/Screen';
@@ -64,36 +65,69 @@ export function AddScreen() {
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={styles.header}>
-          <Text style={styles.kicker}>Spec-Driven study lab</Text>
-          <Text style={styles.title}>NativeModulesAndOff</Text>
-          <Text style={styles.subtitle}>SQLite local-first + Turbo Module nativo</Text>
+        <View
+          style={styles.header}
+          accessible
+          accessibilityRole="header"
+          accessibilityLabel="NativeModulesAndOff. Spec-Driven study lab. SQLite local-first e Turbo Module nativo"
+        >
+          <Text style={styles.kicker} importantForAccessibility="no">
+            Spec-Driven study lab
+          </Text>
+          <Text style={styles.title} importantForAccessibility="no">
+            NativeModulesAndOff
+          </Text>
+          <Text style={styles.subtitle} importantForAccessibility="no">
+            SQLite local-first + Turbo Module nativo
+          </Text>
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Turbo Module</Text>
+        <View
+          style={styles.card}
+          accessible
+          accessibilityRole="summary"
+          accessibilityLabel={nativeCardLabel(native)}
+        >
+          <Text style={styles.cardTitle} importantForAccessibility="no">
+            Turbo Module
+          </Text>
           {native.ok ? (
             <>
-              <Text style={styles.mono}>
+              <Text style={styles.mono} importantForAccessibility="no">
                 {native.snapshot.platform} · {native.snapshot.model}
               </Text>
-              <Text style={styles.muted}>
+              <Text style={styles.muted} importantForAccessibility="no">
                 emulator={String(native.snapshot.isEmulator)} · {native.echo}
               </Text>
             </>
           ) : (
-            <Text style={styles.warn}>{native.message}</Text>
+            <Text style={styles.warn} importantForAccessibility="no">
+              {native.message}
+            </Text>
           )}
         </View>
 
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>Offline-first</Text>
-          <Text style={styles.muted}>
+        <View
+          style={styles.card}
+          accessible
+          accessibilityRole="summary"
+          accessibilityLabel={offlineCardLabel(online, outboxCount, syncResult)}
+        >
+          <Text style={styles.cardTitle} importantForAccessibility="no">
+            Offline-first
+          </Text>
+          <Text style={styles.muted} importantForAccessibility="no">
             rede: {online == null ? '...' : online ? 'online' : 'offline'} · outbox:{' '}
             {outboxCount} · api: {API_URL}
           </Text>
-          {syncResult ? <Text style={styles.mono}>{formatSync(syncResult)}</Text> : (
-            <Text style={styles.muted}>sync automático a cada 5s</Text>
+          {syncResult ? (
+            <Text style={styles.mono} importantForAccessibility="no">
+              {formatSync(syncResult)}
+            </Text>
+          ) : (
+            <Text style={styles.muted} importantForAccessibility="no">
+              sync automático a cada 5s
+            </Text>
           )}
         </View>
 
@@ -106,9 +140,19 @@ export function AddScreen() {
             style={styles.input}
             onSubmitEditing={handleCreate}
             returnKeyType="done"
+            accessibilityLabel="Título da nota local"
+            accessibilityHint="Grava no SQLite deste aparelho"
           />
-          <Pressable style={styles.button} onPress={handleCreate}>
-            <Text style={styles.buttonText}>Salvar</Text>
+          <Pressable
+            style={styles.button}
+            onPress={handleCreate}
+            accessibilityRole="button"
+            accessibilityLabel="Salvar nota local"
+            accessibilityHint="Grava no SQLite agora"
+          >
+            <Text style={styles.buttonText} importantForAccessibility="no">
+              Salvar
+            </Text>
           </Pressable>
         </View>
 
@@ -124,6 +168,9 @@ export function AddScreen() {
             }}
             returnKeyType="done"
             editable={!savingRemote}
+            accessibilityLabel="Título da nota remota"
+            accessibilityHint="Envia agora para o backend"
+            accessibilityState={{ disabled: savingRemote }}
           />
           <Pressable
             style={[styles.button, savingRemote && styles.buttonDisabled]}
@@ -131,34 +178,90 @@ export function AddScreen() {
               void handleCreateRemote();
             }}
             disabled={savingRemote}
+            accessibilityRole="button"
+            accessibilityLabel={savingRemote ? 'Salvando nota no backend' : 'Salvar nota no backend'}
+            accessibilityHint="Grava no servidor agora"
+            accessibilityState={{ disabled: savingRemote, busy: savingRemote }}
           >
-            <Text style={styles.buttonText}>{savingRemote ? '...' : 'Salvar'}</Text>
+            <Text style={styles.buttonText} importantForAccessibility="no">
+              {savingRemote ? '...' : 'Salvar'}
+            </Text>
           </Pressable>
         </View>
         {remoteError ? (
-          <Text style={[styles.warn, styles.remoteError]}>{remoteError}</Text>
+          <Text
+            style={[styles.warn, styles.remoteError]}
+            accessibilityRole="alert"
+            accessibilityLiveRegion="assertive"
+          >
+            {remoteError}
+          </Text>
         ) : null}
 
         <FlatList
           data={notes}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
-          ListEmptyComponent={<Text style={styles.muted}>Nenhuma nota local ainda.</Text>}
-          renderItem={({ item }) => (
-            <View style={styles.note}>
-              <View style={styles.flex}>
-                <Text style={styles.noteTitle}>{item.title}</Text>
-                <Text style={styles.muted}>{new Date(item.updatedAt).toLocaleString()}</Text>
+          accessibilityRole="list"
+          accessibilityLabel="Notas locais"
+          ListEmptyComponent={
+            <Text style={styles.muted} accessibilityRole="text">
+              Nenhuma nota local ainda.
+            </Text>
+          }
+          renderItem={({ item }) => {
+            const updated = new Date(item.updatedAt).toLocaleString();
+            const titleText = item.title.trim() || 'sem título';
+            return (
+              <View style={styles.note}>
+                <View
+                  style={styles.flex}
+                  accessible
+                  accessibilityRole="text"
+                  accessibilityLabel={`${titleText}, atualizada em ${updated}`}
+                >
+                  <Text style={styles.noteTitle} importantForAccessibility="no">
+                    {item.title}
+                  </Text>
+                  <Text style={styles.muted} importantForAccessibility="no">
+                    {updated}
+                  </Text>
+                </View>
+                <Pressable
+                  onPress={() => handleDelete(item.id)}
+                  style={styles.deleteHit}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Excluir nota ${titleText}`}
+                  accessibilityHint="Remove a nota do SQLite local"
+                >
+                  <Text style={styles.delete} importantForAccessibility="no">
+                    excluir
+                  </Text>
+                </Pressable>
               </View>
-              <Pressable onPress={() => handleDelete(item.id)}>
-                <Text style={styles.delete}>excluir</Text>
-              </Pressable>
-            </View>
-          )}
+            );
+          }}
         />
       </KeyboardAvoidingView>
     </Screen>
   );
+}
+
+function nativeCardLabel(native: NativeStatus) {
+  if (!native.ok) {
+    return `Turbo Module. ${native.message}`;
+  }
+  return `Turbo Module. ${native.snapshot.platform}, ${native.snapshot.model}. Emulador ${native.snapshot.isEmulator ? 'sim' : 'não'}. ${native.echo}`;
+}
+
+function offlineCardLabel(
+  online: boolean | null,
+  outboxCount: number,
+  syncResult: SyncResult | null,
+) {
+  const rede = online == null ? 'verificando' : online ? 'online' : 'offline';
+  const sync = syncResult ? formatSync(syncResult) : 'sync automático a cada 5 segundos';
+  return `Offline-first. Rede ${rede}. Outbox ${outboxCount}. API ${API_URL}. ${sync}`;
 }
 
 const styles = StyleSheet.create({
@@ -260,6 +363,12 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 16,
     fontWeight: '600',
+  },
+  deleteHit: {
+    minWidth: 44,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
   },
   delete: {
     color: colors.danger,

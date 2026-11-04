@@ -31,13 +31,33 @@ export function RootTabs() {
               : route.name === 'Local'
                 ? 'phone-portrait-outline'
                 : 'cloud-outline';
-          return <Ionicons name={name} size={size} color={color} />;
+          return (
+            <Ionicons
+              name={name}
+              size={size}
+              color={color}
+              importantForAccessibility="no"
+              accessibilityElementsHidden
+            />
+          );
         },
       })}
     >
-      <Tab.Screen name="Add" component={AddScreen} options={{ title: 'Adicionar' }} />
-      <Tab.Screen name="Local" component={LocalTableScreen} options={{ title: 'Local' }} />
-      <Tab.Screen name="Remote" component={RemoteTableScreen} options={{ title: 'Backend' }} />
+      <Tab.Screen
+        name="Add"
+        component={AddScreen}
+        options={{ title: 'Adicionar', tabBarAccessibilityLabel: 'Adicionar nota' }}
+      />
+      <Tab.Screen
+        name="Local"
+        component={LocalTableScreen}
+        options={{ title: 'Local', tabBarAccessibilityLabel: 'Tabela local no aparelho' }}
+      />
+      <Tab.Screen
+        name="Remote"
+        component={RemoteTableScreen}
+        options={{ title: 'Backend', tabBarAccessibilityLabel: 'Tabela no backend' }}
+      />
     </Tab.Navigator>
   );
 }

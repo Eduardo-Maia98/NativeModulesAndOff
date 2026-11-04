@@ -43,26 +43,41 @@ export function NoteTable({ notes, emptyText, refreshing = false, onRefresh }: P
     >
       <ScrollView horizontal showsHorizontalScrollIndicator>
         <View style={[styles.table, { width: TABLE_WIDTH }]}>
-          <View style={[styles.row, styles.headerRow]}>
+          <View
+            style={[styles.row, styles.headerRow]}
+            accessible
+            accessibilityRole="header"
+            accessibilityLabel={`Colunas: ${COLUMNS.map((column) => column.label).join(', ')}`}
+          >
             {COLUMNS.map((column) => (
-              <Text key={column.key} style={[styles.headerCell, { width: column.width }]}>
+              <Text
+                key={column.key}
+                style={[styles.headerCell, { width: column.width }]}
+                importantForAccessibility="no"
+              >
                 {column.label}
               </Text>
             ))}
           </View>
           {notes.length === 0 ? (
-            <Text style={styles.empty}>{emptyText}</Text>
+            <Text style={styles.empty} accessibilityRole="text">
+              {emptyText}
+            </Text>
           ) : (
             notes.map((note) => (
               <View
                 key={note.id}
                 style={[styles.row, note.deletedAt != null && styles.deletedRow]}
+                accessible
+                accessibilityRole="text"
+                accessibilityLabel={noteRowLabel(note)}
               >
                 {COLUMNS.map((column) => (
                   <Text
                     key={column.key}
                     style={[styles.cell, { width: column.width }]}
                     numberOfLines={1}
+                    importantForAccessibility="no"
                   >
                     {formatCell(note, column.key)}
                   </Text>
@@ -74,6 +89,16 @@ export function NoteTable({ notes, emptyText, refreshing = false, onRefresh }: P
       </ScrollView>
     </ScrollView>
   );
+}
+
+function noteRowLabel(note: Note) {
+  const title = note.title.trim() || 'sem título';
+  const updated = new Date(Number(note.updatedAt)).toLocaleString();
+  const deleted =
+    note.deletedAt == null
+      ? 'não excluída'
+      : `excluída em ${new Date(Number(note.deletedAt)).toLocaleString()}`;
+  return `Nota ${title}. id ${note.id.slice(0, 8)}. Atualizada em ${updated}. ${deleted}`;
 }
 
 function formatCell(note: Note, key: keyof Note) {

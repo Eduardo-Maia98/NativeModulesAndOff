@@ -42,14 +42,31 @@ export function RemoteTableScreen() {
 
   return (
     <Screen>
-      <View style={styles.header}>
-        <Text style={styles.kicker}>SQLite no servidor</Text>
-        <Text style={styles.title}>Tabela backend</Text>
-        <Text style={styles.muted}>
+      <View
+        style={styles.header}
+        accessible
+        accessibilityRole="header"
+        accessibilityLabel={`Tabela backend. SQLite no servidor. Rede ${online == null ? 'verificando' : online ? 'online' : 'offline'}. API ${API_URL}`}
+      >
+        <Text style={styles.kicker} importantForAccessibility="no">
+          SQLite no servidor
+        </Text>
+        <Text style={styles.title} importantForAccessibility="no">
+          Tabela backend
+        </Text>
+        <Text style={styles.muted} importantForAccessibility="no">
           GET /notes · {online == null ? '...' : online ? 'online' : 'offline'} · {API_URL}
         </Text>
-        {error ? <Text style={styles.warn}>{error}</Text> : null}
       </View>
+      {error ? (
+        <Text
+          style={[styles.warn, styles.error]}
+          accessibilityRole="alert"
+          accessibilityLiveRegion="assertive"
+        >
+          {error}
+        </Text>
+      ) : null}
 
       <NoteTable
         notes={notes}
@@ -90,5 +107,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     marginTop: 4,
+  },
+  error: {
+    paddingHorizontal: 20,
+    paddingBottom: 8,
   },
 });
